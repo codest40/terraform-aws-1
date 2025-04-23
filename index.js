@@ -5,7 +5,8 @@ const port = 3000;
 const quotes = [
   { id: 1, author: "Albert Einstein", quote: "Imagination is more important than knowledge." },
   { id: 2, author: "Yoda", quote: "Do or do not. There is no try." },
-  { id: 3, author: "Oscar Wilde", quote: "Be yourself; everyone else is already taken." }
+  { id: 3, author: "Oscar Wilde", quote: "Be yourself; everyone else is already taken." },
+  { id: 4, author: "Grace Hopper", quote: "The most dangerous phrase is: We've always done it this way." }
 ];
 
 app.get('/', (req, res) => res.send('Welcome to Quotes API!'));
@@ -18,6 +19,10 @@ app.get('/quotes/:id', (req, res) => {
   const quote = quotes.find(q => q.id == req.params.id);
   if (quote) res.json(quote);
   else res.status(404).send({ error: 'Quote not found' });
+});
+
+app.get('/health', (req, res) => {
+  res.send({ status: "OK" });
 });
 
 app.listen(port, () => {
