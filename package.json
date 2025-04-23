@@ -1,0 +1,16 @@
+{
+  "name": "quotes-api",
+  "version": "1.0.0",
+  "description": "Quotes API building",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js",
+    "build": "echo 'Build step simulated!'"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
