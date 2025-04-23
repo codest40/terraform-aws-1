@@ -1,3 +1,4 @@
+// src/main.js
 fetch('https://api.quotable.io/quotes?limit=5')
   .then(res => res.json())
   .then(data => {
@@ -9,5 +10,7 @@ fetch('https://api.quotable.io/quotes?limit=5')
     });
   })
   .catch(err => {
-    console.error('Failed to load quotes:', err);
+    console.error('Error loading quotes:', err);
+    const ul = document.getElementById('quote-list');
+    ul.innerHTML = `<li style="color:red;">Failed to load quotes</li>`;
   });
