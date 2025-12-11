@@ -1,5 +1,5 @@
 #!/bin/bash
-# push.sh – Local orchestrator for DevOps workflow
+# push.sh – Local orchestrator for this Project workflow from My Terminal
 
 set -e
 set -o pipefail
@@ -25,7 +25,7 @@ else
     exit 1
 fi
 echo -e "\n====================================================\n"
-sleep 2
+sleep 1
 
 #--------- Optional Bootstrap Mode ----------
 if [[ "$arg" == "bootstrap" ]]; then
@@ -42,7 +42,7 @@ if [[ "$arg" == "bootstrap" ]]; then
     fi
 
     echo -e "\n====================================================\n"
-    sleep 2
+    sleep 1
 else
     echo -e "${YELLOW}[INFO] Bootstrap skipped (run: ./push.sh bootstrap to activate).${NC}"
     echo -e "\n====================================================\n"
@@ -58,7 +58,7 @@ else
 #    exit 1
 fi
 echo -e "\n====================================================\n"
-sleep 2
+sleep 1
 
 #--------- Step 2: Git Push ---------
 echo -e "${YELLOW}[2/3] Pushing code to GitHub to trigger CI/CD...${NC}"
