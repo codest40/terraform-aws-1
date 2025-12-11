@@ -11,8 +11,48 @@ This project demonstrates a full Infrastructure-as-Code (IaC) setup using Terraf
 ---
 
 ## Architecture Diagram
+--------------------
 
-*(Insert diagram here if available)*
+             ┌─────────────────────────┐
+             │     Local Scripts       │
+             │------------------------│
+             │ exporter.sh  (.env)    │
+             │ bootstrap.sh           │
+             │ ansible/secrets.yml    │
+             │ push.sh                │
+             └─────────┬─────────────┘
+                       │
+                       ▼
+             ┌─────────────────────────┐
+             │   GitHub Actions CI/CD  │
+             │------------------------│
+             │ bootstrap.yml           │
+             │ main-terraform.yml      │
+             └─────────┬─────────────┘
+                       │
+                       ▼
+             ┌─────────────────────────┐
+             │     AWS Backend         │
+             │------------------------│
+             │ S3 Bucket  (Terraform) │
+             │ DynamoDB Table (Lock)  │
+             │ OIDC IAM Role           │
+             │ OIDC Provider (GitHub) │
+             └─────────┬─────────────┘
+                       │
+                       ▼
+             ┌─────────────────────────┐
+             │  Main Terraform Infra   │
+             │------------------------│
+             │ ECS Fargate Cluster     │
+             │ ECR Repository          │
+             │ ECS Task IAM Roles      │
+             └─────────────────────────┘
+
+Flow:
+1. Local scripts load environment, bootstrap AWS backend, and upload secrets.
+2. Push triggers GitHub Actions workflows.
+3. Workflows assume OIDC IAM role to deploy main Terraform infrastructure.
 
 ---
 
