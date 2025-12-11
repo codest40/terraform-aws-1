@@ -1,0 +1,71 @@
+name: Terraform Main
+
+# Trigger on pull requests and main branch pushes
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write     # Required for OIDC
+  contents: read      # Checkout repo
+
+jobs:
+  terraform:
+    name: Terraform Plan & Apply
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-east-1
+
+    steps:
+      # 1) Checkout repository
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 2) Configure AWS credentials via OIDC
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.GITHUB_ACTIONS_BOOTSTRAP_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 3) Setup Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.5.0'
+
+      # 4) Terraform Init using backend
+      - name: Terraform Init
+        working-directory: terraform
+        run: |
+          terraform init -input=false -backend-config="bucket=${{ secrets.TFSTATE_BUCKET }}" \
+                                           -backend-config="key=terraform.tfstate" \
+                                           -backend-config="region=${{ env.AWS_REGION }}" \
+                                           -backend-config="dynamodb_table=${{ secrets.TFSTATE_LOCK_TABLE }}"
+
+      # 5) Terraform Format Check
+      - name: Terraform Fmt
+        working-directory: terraform
+        run: terraform fmt -check
+
+      # 6) Terraform Validate
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
+
+      # 7) Terraform Plan (always for PRs)
+      - name: Terraform Plan
+        working-directory: terraform
+        id: plan
+        run: terraform plan -input=false -out=tfplan
+
+      # 8) Terraform Apply (only on main branch)
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan

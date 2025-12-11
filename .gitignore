@@ -1,0 +1,8 @@
+
+
+.env
+info
+t_venv/
+__pycache__/
+
+
