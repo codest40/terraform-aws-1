@@ -1,6 +1,8 @@
 #!/bin/bash
 
 cd terraform/oidc-setup
+dir="$(pwd)"
+echo "Correct Working Dir: $dir"
 
 echo "Testing Env Var Presence"
 echo "AWS REGION: $AWS_REGION"
