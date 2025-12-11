@@ -2,9 +2,8 @@
 
 cd terraform/oidc-setup
 
-export AWS_ACCESS_KEY_ID=YOUR_TEMP_KEY
-export AWS_SECRET_ACCESS_KEY=YOUR_TEMP_SECRET
-export AWS_REGION=us-east-1
+echo "Testing Env Var Presence"
+echo "AWS REGION: $AWS_REGION"
 
 terraform init
 terraform apply -auto-approve

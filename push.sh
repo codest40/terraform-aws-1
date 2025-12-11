@@ -1,6 +1,5 @@
 #!/bin/bash
 # push.sh – Local orchestrator for DevOps workflow
-# Purpose: 3-step orchestration: secrets setup, Git push, local checks
 
 set -e
 set -o pipefail
@@ -12,6 +11,21 @@ RED="\033[0;31m"
 NC="\033[0m"
 
 arg=$1
+
+#--------- Step 0: Load AWS credentials FIRST ----------
+echo -e "${YELLOW}[0] Loading AWS credentials from exporter.sh...${NC}"
+if [ -f ./exporter.sh ]; then
+    chmod +x exporter.sh
+    source ./exporter.sh
+    echo -e "${GREEN}[0] AWS credentials successfully exported.${NC}"
+    echo "Region: $AWS_REGION"
+    echo "API Key: $API_TOKEN"
+else
+    echo -e "${RED}[0] exporter.sh not found! Exiting.${NC}"
+    exit 1
+fi
+echo -e "\n====================================================\n"
+sleep 2
 
 #--------- Optional Bootstrap Mode ----------
 if [[ "$arg" == "bootstrap" ]]; then
@@ -35,23 +49,6 @@ else
     msg=$(date)
 fi
 
-
-#--------- Step 0: Load AWS credentials ----------
-echo -e "${YELLOW}[0/3] Loading AWS credentials from exporter.sh...${NC}"
-if [ -f ./exporter.sh ]; then
-    chmod +x exporter.sh
-    source ./exporter.sh
-    echo -e "${GREEN}[0/3] AWS credentials successfully exported.${NC}"
-    echo "Region: $AWS_REGION"
-    echo "API Key: $API_TOKEN"
-else
-    echo -e "${RED}[0/3] exporter.sh not found! Exiting.${NC}"
-    exit 1
-fi
-echo -e "\n====================================================\n"
-
-sleep 2
-
 #--------- Step 1: Ansible Secrets Setup ---------
 echo -e "${YELLOW}[1/3] Setting up AWS secrets via Ansible...${NC}"
 if ansible-playbook ansible/secrets.yml; then
@@ -61,10 +58,9 @@ else
 #    exit 1
 fi
 echo -e "\n====================================================\n"
-
 sleep 2
 
-#--------- Step 2: Git Push to Trigger CI/CD ---------
+#--------- Step 2: Git Push ---------
 echo -e "${YELLOW}[2/3] Pushing code to GitHub to trigger CI/CD...${NC}"
 
 git add .
@@ -77,10 +73,9 @@ else
     exit 1
 fi
 echo -e "\n====================================================\n"
-
 sleep 3
 
-#--------- Step 3: Local Miscellaneous Checks ---------
+#--------- Step 3: Local Checks ---------
 echo -e "${YELLOW}[3/3] Performing local post-push checks...${NC}"
 
 if aws secretsmanager list-secrets >/dev/null 2>&1; then
@@ -88,8 +83,8 @@ if aws secretsmanager list-secrets >/dev/null 2>&1; then
 else
     echo -e "${RED}[3/3] AWS secrets verification failed!${NC}"
 fi
-echo -e "\n====================================================\n"
 
+echo -e "\n====================================================\n"
 sleep 2
 
 echo -e "${GREEN}[✔] Workflow completed. All steps executed.${NC}"
@@ -97,5 +92,6 @@ echo "Removing .env file now.. "
 if [ -f .env ]; then
     rm .env
 fi
+
 exit 0
 
