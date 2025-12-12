@@ -1,8 +1,5 @@
 # Terraform Infrastructure Project (Simple Fargate + ECR) Foundation
 
-- (NOTE): This infrastructure is a foundation prepared for any Dockerized app
-
----
 ## Project Overview
 
 This project demonstrates a full Infrastructure-as-Code (IaC) setup using Terraform and GitHub Actions for deploying a simple AWS architecture:
@@ -154,3 +151,7 @@ Additional resources (e.g., RDS, S3 buckets, load balancers) can be added withou
 IAM roles are modular; additional roles can be created for ECS tasks, Lambda, or other AWS services.
 
 CI/CD workflow supports future scaling and complex deployments.
+
+
+---
+- (NOTE): This infrastructure is a foundation prepared for Dockerized apps to run. 
