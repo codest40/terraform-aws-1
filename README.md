@@ -153,5 +153,5 @@ IAM roles are modular; additional roles can be created for ECS tasks, Lambda, or
 CI/CD workflow supports future scaling and complex deployments.
 
 
----
-- (NOTE): This infrastructure is a foundation prepared for Dockerized apps to run. 
+
+#### (NOTE): This infrastructure is a foundation prepared for Dockerized apps to run. 
